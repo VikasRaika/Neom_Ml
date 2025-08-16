@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic
+numpy
+scikit-learn
+keybert
+sentence-transformers
+python-multipart
+openai-whisper
+spacy
+pyspellchecker
+nltk
+anthropic>=0.39.0
+python-dotenv>=1.0.1
+
+
+
