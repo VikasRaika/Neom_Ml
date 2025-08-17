@@ -13,18 +13,18 @@ This project implements a mini-ML pipeline that:
 
 ## 📁 Project Structure
 
-├── app/
-│ ├── main.py # FastAPI app entry point
-│ ├── transcription.py # Whisper-based audio transcription
-│ ├── topics.py # Topic extraction and summarization
-│ ├── vectorize.py # Topic embedding + fusion logic
-│ ├── match.py # Matching logic based on vector fusion
-│ └── models.py # Pydantic request/response schemas
-├── sample_data/
-│ ├── sample_audio.wav
-│ └── synthetic_users.json
-├── README.md
-├── requirements.txt
+-├── app/
+-│ ├── main.py # FastAPI app entry point
+-│ ├── transcription.py # Whisper-based audio transcription
+-│ ├── topics.py # Topic extraction and summarization
+-│ ├── vectorize.py # Topic embedding + fusion logic
+-│ ├── match.py # Matching logic based on vector fusion
+-│ └── models.py # Pydantic request/response schemas
+-├── sample_data/
+-│ ├── sample_audio.wav
+-│ └── synthetic_users.json
+-├── README.md
+-├── requirements.txt
 
 
 ---
