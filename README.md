@@ -1,105 +1,227 @@
-# Neom_Ml
-# 🚀 AI/ML Take-Home Project: Psychometric Matching on Conversation Topics
+# 🧠 Psychometric + Topic Embedding Matcher
 
-## Overview
+This is an end-to-end AI/ML pipeline that:
 
-This project implements a mini-ML pipeline that:
-- Transcribes audio content using OpenAI Whisper
-- Extracts & vectorizes discussion topics using KeyBERT + Sentence Transformers
-- Combines topic vectors with synthetic user psychometric profiles
-- Computes a compatibility score based on cosine similarity
+- Transcribes audio using Whisper
+- Extracts topics and summary using Anthropic Claude (LLM)
+- Falls back to KeyBERT + SpaCy + TF-IDF + BART when LLM fails
+- Converts topics into vector space using SentenceTransformer
+- Fuses topic embeddings with user psychometric profiles (from synthetic data)
+- Computes user compatibility using cosine similarity
 
 ---
 
 ## 📁 Project Structure
 
--├── app/
--│ ├── main.py # FastAPI app entry point
--│ ├── transcription.py # Whisper-based audio transcription
--│ ├── topics.py # Topic extraction and summarization
--│ ├── vectorize.py # Topic embedding + fusion logic
--│ ├── match.py # Matching logic based on vector fusion
--│ └── models.py # Pydantic request/response schemas
--├── sample_data/
--│ ├── sample_audio.wav
--│ └── synthetic_users.json
--├── README.md
--├── requirements.txt
-
-
----
-
-## 📦 Loading and Using Sample Data
-
-1. Place `sample_audio.wav` and `synthetic_users.json` inside `sample_data/`
-2. Make sure Whisper and SentenceTransformers are installed
-3. Launch the API and access via Swagger at: `http://127.0.0.1:8000/docs`
+```
+Neom_Ml/
+├── app/
+│   ├── main.py              # FastAPI app entrypoint
+│   ├── transcription.py     # Whisper-based audio transcription
+│   ├── topics.py            # Topic extraction using Anthropic or fallback
+│   ├── vectorize.py         # Topic embedding and fusion with psychometrics
+│   ├── match.py             # Compatibility score logic
+│   └── models.py            # Pydantic request/response models
+├── sample_data/
+│   ├── sample_audio.wav
+│   └── synthetic_users.json
+├── requirements.txt
+├── README.md
+└── .env                     # Add Anthropic API key here
+```
 
 ---
 
-## 🧠 Architecture & Design Decisions
-
-- **Transcription**: OpenAI Whisper for robustness on spoken language
-- **Topic and summary Extraction**: Anthropic API + fallback `keyBERT` + noun phrase filtering + semantic deduplication
-- **Embedding**: SentenceTransformers (`all-MiniLM-L6-v2`) used for dense vectors
-- **Fusion**: Psychometric vector (5D) + scaled topic embedding (384D) → 389D combined vector
-- **Similarity**: Cosine similarity computed on fused vectors
-
----
-
-## 📊 Topic Vectorization & Fusion
-
-- Topics are converted to embeddings using `SentenceTransformer`
-- Each user provides an interest weight (e.g., 0.8 vs 0.6)
-- The topic embedding is scaled by user-specific interest
-- Final vector: `[psychometric ⊕ (topic_embedding × interest_scale)]`
-
----
-
-## 🤝 Matching Logic
-
-- `cosine_similarity(user1_vector, user2_vector)`
-- Similarity score → label: `low`, `medium`, `high`
-- Thresholds: customizable if needed
-- Edge cases: handled by fallback vector averaging and normalization
-
----
-
-## ▶️ How to Run
-
-```bash
-## 📦 Installation & Setup
+## 🚀 Setup & Installation
 
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/VikasRaika/Neom_Ml.git
 cd Neom_Ml
+```
 
+### 2. Python Environment
+
+```bash
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install --upgrade pip
 pip install -r requirements.txt
+```
 
-3. Install System Dependencies
-FFmpeg (Required by Whisper)
+### 3. Install System Dependencies
 
-macOS: brew install ffmpeg
+**FFmpeg** (required by Whisper)
 
-Ubuntu: sudo apt install ffmpeg
+```bash
+# macOS
+brew install ffmpeg
 
-spaCy Model
+# Ubuntu/Debian
+sudo apt install ffmpeg
+
+# Windows (via Chocolatey)
+choco install ffmpeg
+```
+
+**SpaCy English Model**
+
+```bash
 python -m spacy download en_core_web_sm
+```
 
-4. Environment Variables
+### 4. Add Anthropic API Key (Optional but Recommended)
 
-Add your Anthropic API key (optional, recommended): change .env.example to .env, paste the anthropic key 
+```bash
+cp .env.example .env
+# Edit .env and add: ANTHROPIC_API_KEY=your-key-here
+```
 
-5. Run Server
+---
+
+## ▶️ Running the App
+
+```bash
 uvicorn app.main:app --reload
+```
 
-6. Visit Swagger UI
-http://127.0.0.1:8000/docs
+Visit: http://127.0.0.1:8000/docs for interactive API documentation
 
-7. Test the app
+---
+
+## 🧪 Testing the Workflow
+
+### Step 1: Transcribe Audio
+
+```bash
+POST /transcribe
+{
+  "file": "sample_audio.wav"
+}
+```
+
+### Step 2: Extract Topics + Summary
+
+```bash
+POST /summarise
+{
+  "text": "<transcription text>"
+}
+```
+
+**Returns:**
+```json
+{
+  "topics": ["Mars Mission", "Autonomous Landing", "Space Technology"],
+  "topic_weights": [0.25, 0.2, 0.15],
+  "summary": "This interview focuses on..."
+}
+```
+
+### Step 3: Match Two Users
+
+```bash
+POST /match
+{
+  "user1_id": "user_1",
+  "user2_id": "user_2",
+  "topics": ["AI Agents", "Future Workplace"],
+  "topic_embedding": [...],
+  "topic_scale_user1": 0.9,
+  "topic_scale_user2": 0.6
+}
+```
+
+**Returns:**
+```json
+{
+  "score": 0.8237,
+  "label": "high",
+  "detail": "combined_dim=389"
+}
+```
+
+---
+
+## 🧠 Architecture Highlights
+
+- **Transcription**: Whisper (base model) — fast and accurate
+- **Topic Extraction**:
+  - Primary: Anthropic Claude (`claude-sonnet-4-20250514`)
+  - Fallback: KeyBERT + SpaCy noun chunking + BART summarizer
+- **Embeddings**: `all-MiniLM-L6-v2` via SentenceTransformers
+- **Fusion**:
+  - Psychometrics = 5D vector
+  - Topics = 384D vector scaled by interest
+  - Final: 389D vector per user
+- **Similarity**: Cosine similarity + label buckets
+
+---
+
+## 💡 Key Design Concepts
+
+### 🔍 Topic Vectorization
+- Topic phrases → embedded via MiniLM
+- Optionally merged semantically (using cosine threshold)
+- Scaled per-user via topic interest (`0.6` or `0.8`)
+
+### 🔗 Vector Fusion
+
+```python
+fused_vector = concat(psychometric_vector, topic_embedding * scale)
+```
+
+Different scales per user provide **differentiated alignment** in similarity calculations.
+
+### ⚖️ Matching Logic
+- Cosine similarity between 389D fused vectors
+- Score mapped to labels:
+  - `> 0.8` → High compatibility
+  - `0.6–0.8` → Medium compatibility
+  - `< 0.6` → Low compatibility
+- **Robust Error Handling**:
+  - Missing topic vectors: fallback to psychometric-only matching
+  - Zero-divisions: handled via `np.clip` & graceful fallbacks
+
+---
+
+## ✅ Creative Extensions
+
+- Recommend **new friends** or **podcasts** based on topic resonance
+- Real-time summarization + psychometric matching in meetings
+- Chat UI integration (React/Vue frontend)
+- **Audio-based matching**: Users "listen" to podcasts/interviews and receive compatibility recommendations
+- **Interest-based conversational recommender**: Evolve matching into broader recommendation system
+
+---
+
+## 📈 Next Steps & Improvements
+
+- **Enhanced Topic Models**: Train domain-specific topic extraction models
+- **Multi-user Matching**: Support group dynamics and cluster-based compatibility
+- **Dynamic Learning**: Implement adaptive matching weight optimization
+- **Advanced Similarity**: Replace static cosine similarity with learned similarity functions
+- **User Preference Vectors**: Add persistent, evolving topic preference tracking
+- **Real-time UI**: Build responsive frontend for live conversation analysis
+
+---
+
+## 🛠️ Technical Stack
+
+- **Backend**: FastAPI
+- **Audio Processing**: OpenAI Whisper
+- **NLP**: Anthropic Claude API, KeyBERT, SpaCy, BART
+- **Embeddings**: SentenceTransformers (MiniLM)
+- **Vector Operations**: NumPy, SciPy
+- **Data Handling**: Pandas, Pydantic
+
+---
+
+## 📝 API Documentation
+
+Once running, visit `/docs` for complete interactive API documentation with request/response schemas and testing interface.
+
+
+
 
