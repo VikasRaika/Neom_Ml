@@ -73,7 +73,7 @@ This project implements a mini-ML pipeline that:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Neom_Ml.git
+git clone https://github.com/VikasRaika/Neom_Ml.git
 cd Neom_Ml
 
 python3 -m venv .venv
