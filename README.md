@@ -1,4 +1,4 @@
-# 🧠 Psychometric + Topic Embedding Matcher
+# Psychometric + Topic Embedding Matcher
 
 This is an end-to-end AI/ML pipeline that:
 
@@ -32,7 +32,7 @@ Neom_Ml/
 
 ---
 
-## 🚀 Setup & Installation
+## Setup & Installation
 
 ### 1. Clone the Repository
 
