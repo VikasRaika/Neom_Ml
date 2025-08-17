@@ -106,17 +106,29 @@ POST /transcribe
 ```bash
 POST /summarise
 {
-  "text": "<transcription text>"
+
+  "transcript": "Hey, imagine a software that doesn't need you. It can think, plan and take action on its own. Sounds futuristic right? Well I welcome to the world of AI agents. Sounds futuristic right? I welcome you to the world of AI agents. My name is Vikas and I will help you understand what AI agents are, why they are trending and how they are changing the world. AI agents are nothing but advanced software programs that can do complex tasks on their own. Unlike traditional softwares which needs your input. So why they are trending? Companies everywhere see AI agents as big time savers instead of needing a big team to do small routine tasks. So now is the right time for you to learn and work with AI agents. Today, you might be using a phone or a website to order food but soon AI agents will find you the best restaurants with best deals, apply coupon, make the order, schedule delivery without you lifting a finger. Without you lifting a finger. AI agents like Replete, Devon AI can make your software application in no time and the number of new AI agents is increasing every day. Product predict by end of this year 25% of the companies who use generative AI will rely on such AI agents for their daily operations. And by the year 2027 this number might jump to 50%. Industries like how AI agents can simplify and speed up the work. What Zuckerberg says there will be more AI agents than people but not to replace us but to empower us. So like share and comment on this video and follow the trend screen for more such updates for more such updates on tech and AI."
+,
+  "top_k": 5
 }
 ```
 
 **Returns:**
 ```json
 {
-  "topics": ["Mars Mission", "Autonomous Landing", "Space Technology"],
-  "topic_weights": [0.25, 0.2, 0.15],
-  "summary": "This interview focuses on..."
-}
+  "topics": [
+    "AI Agents Technology",
+    "Autonomous Software Capabilities",
+    "Business Automation Trends",
+    "Industry Adoption Predictions",
+    "Future Workplace Transformation"
+  ],
+  "summary": "The video introduces AI agents as advanced software programs that can perform complex tasks autonomously without human input, representing a significant shift from traditional software that requires constant user interaction. Companies are increasingly adopting AI agents to save time and reduce the need for large teams to handle routine tasks, with predictions suggesting 25% of generative AI companies will rely on them by year-end and 50% by 2027. The technology promises to transform daily activities like food ordering and software development, with leaders like Zuckerberg envisioning AI agents as tools to empower rather than replace humans.",
+  "topic_embedding": [
+    -0.03390064835548401,
+    -0.05011272057890892,
+    -0.03252394124865532,
+    -0.052154291421175,....]
 ```
 
 ### Step 3: Match Two Users
@@ -124,12 +136,15 @@ POST /summarise
 ```bash
 POST /match
 {
-  "user1_id": "user_1",
-  "user2_id": "user_2",
-  "topics": ["AI Agents", "Future Workplace"],
-  "topic_embedding": [...],
-  "topic_scale_user1": 0.9,
-  "topic_scale_user2": 0.6
+  "topics": [
+    "AI Agents Technology",
+    "Autonomous Software Capabilities",
+    "Business Automation Trends",
+    "Industry Adoption Predictions",
+    "Future Workplace Transformation"
+  ],
+  "topic_scale_user1": 0.4,
+  "topic_scale_user2": 0.8
 }
 ```
 
