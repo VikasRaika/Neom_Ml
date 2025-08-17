@@ -40,7 +40,7 @@ This project implements a mini-ML pipeline that:
 ## 🧠 Architecture & Design Decisions
 
 - **Transcription**: OpenAI Whisper for robustness on spoken language
-- **Topic Extraction**: `keyBERT` + noun phrase filtering + semantic deduplication
+- **Topic and summary Extraction**: Anthropic API + fallback `keyBERT` + noun phrase filtering + semantic deduplication
 - **Embedding**: SentenceTransformers (`all-MiniLM-L6-v2`) used for dense vectors
 - **Fusion**: Psychometric vector (5D) + scaled topic embedding (384D) → 389D combined vector
 - **Similarity**: Cosine similarity computed on fused vectors
@@ -68,13 +68,38 @@ This project implements a mini-ML pipeline that:
 ## ▶️ How to Run
 
 ```bash
-# 1. Set up Python environment
+## 📦 Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/Neom_Ml.git
+cd Neom_Ml
+
 python3 -m venv .venv
 source .venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 
-# 2. Launch FastAPI server
+3. Install System Dependencies
+FFmpeg (Required by Whisper)
+
+macOS: brew install ffmpeg
+
+Ubuntu: sudo apt install ffmpeg
+
+spaCy Model
+python -m spacy download en_core_web_sm
+
+4. Environment Variables
+
+Add your Anthropic API key (optional, recommended): change .env.example to .env, paste the anthropic key 
+
+5. Run Server
 uvicorn app.main:app --reload
 
-# 3. Visit Swagger UI
+6. Visit Swagger UI
 http://127.0.0.1:8000/docs
+
+7. Test the app
+
