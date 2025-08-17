@@ -74,7 +74,7 @@ python -m spacy download en_core_web_sm
 ### 4. Add Anthropic API Key (Optional but Recommended)
 
 ```bash
-cp .env.example .env
+rename .env.example to .env
 # Edit .env and add: ANTHROPIC_API_KEY=your-key-here
 ```
 
