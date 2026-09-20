@@ -51,7 +51,7 @@ sample_data/              # sample audio + synthetic user profiles
 
 ## Run it
 ```bash
-git clone https://github.com/VikasRaika/voicematch-ai && cd Neom_Ml
+git clone https://github.com/VikasRaika/voicematch-ai && cd voicematch-ai
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env          # add your ANTHROPIC_API_KEY (optional; falls back without it)
